@@ -2,15 +2,14 @@ kind: pipeline
 type: docker
 name: default
 
-environment:
-  VERSION: 1.0.0
-
 steps:
   - name: publish
     image: plugins/docker
     settings:
       repo: joene/discogssorter
-      tags: [ "${VERSION}", "latest" ]
+      tags:
+        - "${DRONE_BRANCH}"
+        - "${DRONE_COMMIT_SHA}"
       username:
         from_secret: docker_username
       password:
