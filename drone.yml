@@ -3,8 +3,12 @@ type: docker
 name: default
 
 steps:
-  - name: greeting
-    image: alpine
-    commands:
-      - echo hello
-      - echo world
+  - name: publish
+    image: plugins/docker
+    settings:
+      repo: joene/discogssorter
+      tags: [ "latest" ]
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
