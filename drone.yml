@@ -12,3 +12,15 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
+
+  - name: publish release
+    image: plugins/gitea-release
+    settings:
+      api_key:
+        from_secret: gitea_token
+      base_url:
+        from_secret: gitea_url
+      note: CHANGELOG.md
+      title: "Version ${DRONE_TAG}"
+    when:
+      event: tag
