@@ -5,8 +5,6 @@ name: default
 steps:
   - name: publish branch
     image: plugins/docker
-    when:
-      event: !tag
     settings:
       repo: joene/discogssorter
       auto_tag: true
