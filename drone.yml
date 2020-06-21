@@ -3,12 +3,28 @@ type: docker
 name: default
 
 steps:
-  - name: publish
+  - name: publish branch
     image: plugins/docker
+    when:
+      event: !tag
     settings:
       repo: joene/discogssorter
       tags:
         - "${DRONE_BRANCH}"
+        - "${DRONE_COMMIT_SHA}"
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+
+  - name: publish tag
+    image: plugins/docker
+    when:
+      event: tag
+    settings:
+      repo: joene/discogssorter
+      tags:
+        - "${DRONE_TAG}"
         - "${DRONE_COMMIT_SHA}"
       username:
         from_secret: docker_username
