@@ -1,6 +1,5 @@
 # DiscogsSorter
-[![Build Status](https://drone.krokantekrab.be/api/badges/administrator/DiscogsSorter/status.svg?ref=refs/heads/devel)](https://drone.krokantekrab.be/administrator/DiscogsSorter)
-
+![Build and Push](https://github.com/Jeroen7V/DiscogsSorter/workflows/Build%20and%20Push/badge.svg)
 Sort a discogs collection.
 
 ## Installation
