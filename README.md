@@ -1,5 +1,6 @@
 # DiscogsSorter
 ![Build and Push](https://github.com/Jeroen7V/DiscogsSorter/workflows/Build%20and%20Push/badge.svg)
+
 Sort a discogs collection.
 
 ## Installation
