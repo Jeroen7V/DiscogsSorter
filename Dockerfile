@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir requests pydantic fastapi aiofiles jinja2
 WORKDIR /src
 COPY ./src /src
 
-CMD ["uvicorn", "main:app"]
+CMD ["uvicorn", "main:app", "--proxy-headers"]
