@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add option to run behind reverse proxy
 - Listen to all IPs
+- Add release type
+### Changed
+- Get speed and format without custom fields
 
 ## [1.0.1] - 2020-06-21
 ### Added

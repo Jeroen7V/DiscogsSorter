@@ -25,9 +25,10 @@ class Release(BaseModel):
     styles: Optional[List[str]]
     labels: Optional[List[LabelRelease]] = []
     sort_genre: str = ""
-    sort_format: str = ""
-    sort_format_save: str = ""
-    sort_speed: str = ""
+
+    size: str = ""
+    speed: str = ""
+    type: str = ""
 
 
 def fetch_collection(p_user, p_token):
@@ -45,16 +46,12 @@ def fetch_collection(p_user, p_token):
         + "/collection/fields?per_page=1000000&token="
         + p_token
     )
-    dc_sort_format = dc_sort_genre = dc_sort_speed = 0
+    dc_sort_genre = 0
 
     if "fields" in dc_fields.json():
         for field in dc_fields.json()["fields"]:
-            if field["name"].upper() == "SORT_FORMAT":
-                dc_sort_format = field["id"]
-            elif field["name"].upper() == "SORT_GENRE":
+            if field["name"].upper() == "SORT_GENRE":
                 dc_sort_genre = field["id"]
-            elif field["name"].upper() == "SORT_SPEED":
-                dc_sort_speed = field["id"]
 
     releases = []
     for item in dc_releases:
@@ -63,6 +60,58 @@ def fetch_collection(p_user, p_token):
         release = Release(
             title=info["title"], genres=info["genres"], styles=info["styles"],
         )
+
+        for format in info["formats"]:
+            if format["name"] == "CD":
+                release.size = "CD"
+                release.speed = ""
+                if "descriptions" in format:
+                    for description in format["descriptions"]:
+                        if "EP" == description:
+                            release.type = "EP"
+                        elif "LP" == description:
+                            release.type = "Album"
+                        elif "Album" == description:
+                            release.type = "Album"
+                        elif "Maxi-Single" == description:
+                            release.type = "Maxi-Single"
+                        elif "Single" == description:
+                            release.type = "Single"
+                        elif "Compilation" == description:
+                            release.type = "Album"
+            else:
+                if "descriptions" in format:
+                    for description in format["descriptions"]:
+                        if "\"" in description:
+                            release.size = description
+                        elif "RPM" in description:
+                            if release.speed == "":
+                                release.speed = description
+                            elif release.speed != description:
+                                release.speed = release.speed + "/" + description
+                        elif "LP" == description:
+                            release.size = "12\""
+                            release.speed = "33 ⅓ RPM"
+                            release.type = "Album"
+                        elif "EP" == description:
+                            release.type = "EP"
+                        elif "Album" == description:
+                            release.type = "Album"
+                        elif "Maxi-Single" == description:
+                            release.type = "Maxi-Single"
+                        elif "Single" == description:
+                            release.type = "Single"
+                        elif "Compilation" == description:
+                            release.type = "Album"
+
+        if release.type == "":
+            if release.size == "12\"" or release.size == "10\"":
+                if release.speed == "45 RPM":
+                    release.type = "Maxi-Single (est)"
+            elif release.size == "7\"":
+                release.type = "Single (est)"
+            elif release.size == "CD":
+                release.type = "Album (est)"
 
         for label in info["labels"]:
             labelRelease = LabelRelease(label=label["name"], release=label["catno"])
@@ -77,29 +126,22 @@ def fetch_collection(p_user, p_token):
                 if note["field_id"] == dc_sort_genre:
                     if note["value"]:
                         release.sort_genre = note["value"]
-                if note["field_id"] == dc_sort_format:
-                    if note["value"]:
-                        release.sort_format = note["value"]
-                        release.sort_format_save = note["value"].replace('"', "INCH")
-                if note["field_id"] == dc_sort_speed:
-                    if note["value"]:
-                        release.sort_speed = note["value"]
         except:
             pass
 
         releases.append(release)
 
     return sorted(
-        releases, key=lambda x: (x.sort_format, x.sort_genre, x.artist, x.title)
+        releases, key=lambda x: (x.size, x.sort_genre, x.artist, x.title)
     )
 
 
 def sort_by_format(p_releases: Release):
     releases_sorted = {}
     for release in p_releases:
-        if release.sort_format_save not in releases_sorted:
-            releases_sorted[release.sort_format_save] = []
-        releases_sorted[release.sort_format_save].append(release)
+        if release.size not in releases_sorted:
+            releases_sorted[release.size] = []
+        releases_sorted[release.size].append(release)
 
     for sort_format, realeases in releases_sorted.items():
         releases_sorted[sort_format] = sorted(
@@ -114,10 +156,10 @@ def write_csv(p_releases):
 
     with open(csvfilename, "w", newline="") as csvfile:
         csvwriter = csv.writer(csvfile)
-        csvwriter.writerow(["size", "genre", "artist", "title", "speed"])
+        csvwriter.writerow(["size", "type", "genre", "artist", "title", "speed"])
         for release in p_releases:
             csvwriter.writerow(
-                [release.sort_format, release.sort_genre, release.artist, release.title, release.sort_speed]
+                [release.size, release.type, release.sort_genre, release.artist, release.title, release.speed]
             )
 
     return csvfilename
