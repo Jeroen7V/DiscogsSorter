@@ -9,7 +9,7 @@ EXPOSE 8000
 
 RUN pip install --no-cache-dir requests pydantic fastapi aiofiles jinja2
 
-WORKDIR /src
 COPY ./src /src
+WORKDIR /src
 
-CMD ["uvicorn", "main:app", "--proxy-headers"]
+CMD uvicorn --host 0.0.0.0 --proxy-headers main:app
