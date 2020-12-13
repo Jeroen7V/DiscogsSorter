@@ -16,6 +16,7 @@ class Release(BaseModel):
     title: Optional[str]
     artist: Optional[str] = ""
     size: str = ""
+    size_safe: str = ""
     speed: str = ""
     type: str = ""
     sort_genre: str = ""
@@ -104,6 +105,7 @@ def fetch_collection(p_user, p_token):
                 release.type = "Album (est)"
 
         release.speed = release.speed.replace("⅓ ", "")
+        release.size_safe = release.size.replace("\"", "INCH")
 
         for line in info["artists"]:
             release.artist += " " + line["name"] + " " + line["join"]
