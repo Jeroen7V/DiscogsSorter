@@ -76,13 +76,14 @@ def fetch_collection(p_user, p_token):
                         if "\"" in description:
                             release.size = description
                         elif "RPM" in description:
+                            speedstr = description.replace(" RPM", "").replace(" ⅓", "")
                             if release.speed == "":
-                                release.speed = description
-                            elif release.speed != description:
-                                release.speed = release.speed + "/" + description
+                                release.speed = speedstr
+                            elif release.speed != speedstr:
+                                release.speed = release.speed + "/" + speedstr
                         elif "LP" == description:
                             release.size = "12\""
-                            release.speed = "33 ⅓ RPM"
+                            release.speed = "33"
                             release.type = "Album"
                         elif "EP" == description:
                             release.type = "EP"
@@ -97,14 +98,19 @@ def fetch_collection(p_user, p_token):
 
         if release.type == "":
             if release.size == "12\"" or release.size == "10\"":
-                if release.speed == "45 RPM":
+                if release.speed == "45":
+                    release.type = "Maxi-Single"
+                if release.speed == "33":
+                    release.type = "Album"
+                else:
                     release.type = "Maxi-Single"
             elif release.size == "7\"":
                 release.type = "Single"
             elif release.size == "CD":
                 release.type = "Album"
 
-        release.speed = release.speed.replace("⅓ ", "")
+        if len(release.speed) > 0:
+            release.speed = release.speed + " RPM"
         release.size_safe = release.size.replace("\"", "INCH")
 
         for line in info["artists"]:
