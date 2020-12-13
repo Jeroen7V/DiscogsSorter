@@ -12,23 +12,13 @@ from fastapi.templating import Jinja2Templates
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-
-class LabelRelease(BaseModel):
-    label: str
-    release: str
-
-
 class Release(BaseModel):
     title: Optional[str]
     artist: Optional[str] = ""
-    genres: Optional[List[str]]
-    styles: Optional[List[str]]
-    labels: Optional[List[LabelRelease]] = []
-    sort_genre: str = ""
-
     size: str = ""
     speed: str = ""
     type: str = ""
+    sort_genre: str = ""
 
 
 def fetch_collection(p_user, p_token):
@@ -46,8 +36,8 @@ def fetch_collection(p_user, p_token):
         + "/collection/fields?per_page=1000000&token="
         + p_token
     )
-    dc_sort_genre = 0
 
+    dc_sort_genre = 0
     if "fields" in dc_fields.json():
         for field in dc_fields.json()["fields"]:
             if field["name"].upper() == "SORT_GENRE":
@@ -112,10 +102,6 @@ def fetch_collection(p_user, p_token):
                 release.type = "Single (est)"
             elif release.size == "CD":
                 release.type = "Album (est)"
-
-        for label in info["labels"]:
-            labelRelease = LabelRelease(label=label["name"], release=label["catno"])
-            release.labels.append(labelRelease)
 
         for line in info["artists"]:
             release.artist += " " + line["name"] + " " + line["join"]
@@ -196,21 +182,3 @@ async def get_html(
             "len": len,
         },
     )
-
-
-@app.get("/api/", include_in_schema=False)
-async def get_api():
-    return RedirectResponse("/redoc")
-
-
-@app.get("/api/releases/{user}")
-async def get_api_releases(
-    user: str, user_token: str = None, csv: bool = False, bygenre: bool = False
-):
-    releases = fetch_collection(user, user_token)
-    if csv:
-        return FileResponse(write_csv(releases), filename="releases.csv")
-    elif bygenre:
-        return sort_by_format(releases)
-    else:
-        return releases
