@@ -54,7 +54,7 @@ def fetch_collection(p_user, p_token):
         for format in info["formats"]:
             if format["name"] == "CD":
                 release.size = "CD"
-                release.speed = ""
+                release.speed = "CD"
                 if "descriptions" in format:
                     for description in format["descriptions"]:
                         if "EP" == description:
@@ -102,6 +102,8 @@ def fetch_collection(p_user, p_token):
                 release.type = "Single (est)"
             elif release.size == "CD":
                 release.type = "Album (est)"
+
+        release.speed = release.speed.replace("⅓ ", "")
 
         for line in info["artists"]:
             release.artist += " " + line["name"] + " " + line["join"]
