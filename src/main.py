@@ -98,11 +98,11 @@ def fetch_collection(p_user, p_token):
         if release.type == "":
             if release.size == "12\"" or release.size == "10\"":
                 if release.speed == "45 RPM":
-                    release.type = "Maxi-Single (est)"
+                    release.type = "Maxi-Single"
             elif release.size == "7\"":
-                release.type = "Single (est)"
+                release.type = "Single"
             elif release.size == "CD":
-                release.type = "Album (est)"
+                release.type = "Album"
 
         release.speed = release.speed.replace("⅓ ", "")
         release.size_safe = release.size.replace("\"", "INCH")
