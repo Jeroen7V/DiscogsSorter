@@ -20,6 +20,7 @@ class Release(BaseModel):
     speed: str = ""
     type: str = ""
     sort_genre: str = ""
+    folder: str = ""
 
 
 def fetch_collection(p_user, p_token):
@@ -37,6 +38,13 @@ def fetch_collection(p_user, p_token):
         + "/collection/fields?per_page=1000000&token="
         + p_token
     )
+    
+    dc_folders = requests.get(
+        "https://api.discogs.com/users/"
+        + p_user
+        + "/collection/folders?per_page=1000000&token="
+        + p_token
+    )
 
     dc_sort_genre = 0
     if "fields" in dc_fields.json():
@@ -47,10 +55,15 @@ def fetch_collection(p_user, p_token):
     releases = []
     for item in dc_releases:
         info = item["basic_information"]
+        folder_id = item["folder_id"]
 
         release = Release(
             title=info["title"], genres=info["genres"], styles=info["styles"],
         )
+
+        for folder in dc_folders.json()["folders"]:
+            if folder["id"] == folder_id:
+                release.folder = folder["name"]
 
         for format in info["formats"]:
             if format["name"] == "CD":
