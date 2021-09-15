@@ -137,7 +137,7 @@ def fetch_collection(p_user, p_token):
                         release.sort_genre = note["value"]
         except:
             pass
-
+                
         releases.append(release)
 
     return sorted(
@@ -165,10 +165,10 @@ def write_csv(p_releases):
 
     with open(csvfilename, "w", newline="") as csvfile:
         csvwriter = csv.writer(csvfile)
-        csvwriter.writerow(["size", "type", "genre", "artist", "title", "speed"])
+        csvwriter.writerow(["folder", "size", "type", "genre", "artist", "title", "speed"])
         for release in p_releases:
             csvwriter.writerow(
-                [release.size, release.type, release.sort_genre, release.artist, release.title, release.speed]
+                [release.folder, release.size, release.type, release.sort_genre, release.artist, release.title, release.speed]
             )
 
     return csvfilename

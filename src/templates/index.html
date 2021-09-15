@@ -69,6 +69,7 @@
                 <table id="releases" class="table table-striped table-hover table-sm">
                     <thead class="thead-light">
                         <tr>
+                            <th scope="col">folder</th>
                             <th scope="col">format</th>
                             <th scope="col">type</th>
                             {% if user_token %}
@@ -82,6 +83,7 @@
                     <tbody>
                         {% for release in releases %}
                         <tr class="{{ release.size_safe }}">
+                            <td>{{ release.folder }}</td>
                             <td>{{ release.size }}</td>
                             <td>{{ release.type }}</td>
                             {% if user_token %}
