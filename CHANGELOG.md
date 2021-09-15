@@ -4,12 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.2] - 2021-09-15
 ### Added
 - Add option to run behind reverse proxy
 - Listen to all IPs
 - Add release type
 - Github actions build
+- Add folder
 ### Changed
 - Get speed and format without custom fields
 ### Removed
