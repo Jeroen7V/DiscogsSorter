@@ -1,0 +1,9 @@
+.sort.desc:after {
+    content: "\2191";
+    border-left: 5px solid transparent;
+}
+
+.sort.asc:after {
+    content: "\2193";
+    border-left: 5px solid transparent;
+}
