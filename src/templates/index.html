@@ -64,7 +64,7 @@
             </div>
             <div class="col-md-3">
                 <h4>Formats:</h4>
-                {% for rel_format, releases in releases_sorted.items() %}
+                {% for rel_format in releases_formats %}
                 <div class="form-check form-switch">
                     <input class="form-check-input rel_switch" type="checkbox" id="rel_{{rel_format | replace('\"', 'INCH') }}" checked>
                     <label class="form-check-label" for="rel_{{rel_format | replace('\"', 'INCH') }}">{{rel_format}}</label>

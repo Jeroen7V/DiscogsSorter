@@ -171,6 +171,15 @@ def get_folders(p_releases: Release):
             folders.append(release.folder)
     return folders
 
+def get_formats(p_releases: Release):
+    formats = []
+    for release in p_releases:
+        if not formats:
+            formats = [release.size]
+        elif release.size not in formats:
+            formats.append(release.size)
+    return formats
+
 def write_csv(p_releases):
     csvfilename = "releases.csv"
 
@@ -190,14 +199,14 @@ async def get_html(
     request: Request, user: str = None, user_token: str = None, type: str = None
 ):
     releases = []
-    releases_sorted = {}
     releases_folders = []
+    releases_formats = []
 
     if type:
         if user and type == "HTML":
             releases = fetch_collection(user, user_token)
-            releases_sorted = sort_by_format(releases)
             releases_folders = get_folders(releases)
+            releases_formats = get_formats(releases)
         elif user and type == "CSV":
             releases = fetch_collection(user, user_token)
             return FileResponse(write_csv(releases), filename="releases.csv")
@@ -214,8 +223,8 @@ async def get_html(
             "user_token": user_token,
             "type": type,
             "releases": releases,
-            "releases_sorted": releases_sorted,
             "releases_folders": releases_folders,
+            "releases_formats": releases_formats,
             "len": len,
         },
     )
