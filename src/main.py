@@ -24,7 +24,6 @@ class Release(BaseModel):
     sort_genre: str = ""
     folder: str = ""
 
-
 def fetch_collection(p_user, p_token):
     dc_collection = requests.get(
         "https://api.discogs.com/users/"
@@ -163,6 +162,14 @@ def sort_by_format(p_releases: Release):
 
     return releases_sorted
 
+def get_folders(p_releases: Release):
+    folders = []
+    for release in p_releases:
+        if not folders:
+            folders = [release.folder]
+        elif release.folder not in folders:
+            folders.append(release.folder)
+    return folders
 
 def write_csv(p_releases):
     csvfilename = "releases.csv"
@@ -184,11 +191,13 @@ async def get_html(
 ):
     releases = []
     releases_sorted = {}
+    releases_folders = []
 
     if type:
         if user and type == "HTML":
             releases = fetch_collection(user, user_token)
             releases_sorted = sort_by_format(releases)
+            releases_folders = get_folders(releases)
         elif user and type == "CSV":
             releases = fetch_collection(user, user_token)
             return FileResponse(write_csv(releases), filename="releases.csv")
@@ -206,6 +215,7 @@ async def get_html(
             "type": type,
             "releases": releases,
             "releases_sorted": releases_sorted,
+            "releases_folders": releases_folders,
             "len": len,
         },
     )

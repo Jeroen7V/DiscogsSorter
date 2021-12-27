@@ -53,7 +53,16 @@
             <div class="col-md-12">
                 <hr />
             </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
+                <h4>Folders:</h4>
+                {% for rel_folder in releases_folders %}
+                <div class="form-check form-switch">
+                    <input class="form-check-input rel_switch" type="checkbox" id="folder_{{rel_folder}}" checked>
+                    <label class="form-check-label" for="folder_{{rel_folder}}">{{rel_folder}}</label>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-3">
                 <h4>Formats:</h4>
                 {% for rel_format, releases in releases_sorted.items() %}
                 <div class="form-check form-switch">
@@ -109,6 +118,7 @@
     <script>
         $(document).ready( function () {
             filterRel = []
+            filterFolder = []
 
             var options = {
                 {% if user_token %}
@@ -130,6 +140,12 @@
                     } else {
                         delete filterRel[filterRel.indexOf(switchVal)]
                     }
+                } else if (switchType == "folder") {
+                    if ($(this)[0].checked) {
+                        filterFolder.push(switchVal)
+                    } else {
+                        delete filterFolder[filterFolder.indexOf(switchVal)]
+                    }
                 }
             }
 
@@ -137,11 +153,10 @@
 
             $(':checkbox').change(function() {
                 filterRel = []
+                filterFolder = []
                 $(':checkbox').each(filterList)
-                console.log(filterRel)
                 releaseList.filter(function(item){
-                    console.log(item.values().size.replace('"', "INCH"))
-                    if (filterRel.includes(item.values().size.replace('"', "INCH"))) {
+                    if (filterRel.includes(item.values().size.replace('"', "INCH")) && filterFolder.includes(item.values().folder )) {
                         return true
                     } else {
                         return false
