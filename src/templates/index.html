@@ -129,6 +129,11 @@
             }
 
             var releaseList = new List('releases', options);
+            releaseList.sort("title");
+            releaseList.sort("artist");
+            {% if user_token %}
+            releaseList.sort("genre");
+            {% endif %}
 
             function filterList() {
                 switchType = $(this)[0].id.split("_")[0]

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - artist string check
 - folder filter
+- sort items on load
 
 ### Changed
 
