@@ -53,14 +53,15 @@
             <div class="col-md-12">
                 <hr />
             </div>
-            <div class="col-md d-grid gap-2">
-                <button type="button" class="btn btn-primary btn-block" onclick="filterTable()">All ({{ len(releases) }})</button>
+            <div class="col-md-6">
+                <h4>Formats:</h4>
+                {% for rel_format, releases in releases_sorted.items() %}
+                <div class="form-check form-switch">
+                    <input class="form-check-input rel_switch" type="checkbox" id="rel_{{rel_format | replace('\"', 'INCH') }}" checked>
+                    <label class="form-check-label" for="rel_{{rel_format | replace('\"', 'INCH') }}">{{rel_format}}</label>
+                </div>
+                {% endfor %}
             </div>
-            {% for rel_format, releases in releases_sorted.items() %}
-            <div class="col-md d-grid gap-2">
-                <button type="button" class="btn btn-primary btn-block" onclick="filterTable('{{rel_format.replace('"', 'INCH')}}')">{{ rel_format.replace('INCH', '"') }} ({{ len(releases)   }})</button>
-            </div>
-            {% endfor %}
         </div>
         {% endif %}
         
@@ -107,6 +108,8 @@
 
     <script>
         $(document).ready( function () {
+            filterRel = []
+
             var options = {
                 {% if user_token %}
                 valueNames: [ 'folder', 'size', 'type', 'genre', 'artist', 'title', 'speed' ]
@@ -116,6 +119,36 @@
             }
 
             var releaseList = new List('releases', options);
+
+            function filterList() {
+                switchType = $(this)[0].id.split("_")[0]
+                switchVal = $(this)[0].id.split("_")[1]
+
+                if (switchType == "rel") {
+                    if ($(this)[0].checked) {
+                        filterRel.push(switchVal)
+                    } else {
+                        delete filterRel[filterRel.indexOf(switchVal)]
+                    }
+                }
+            }
+
+            $(':checkbox').each(filterList)
+
+            $(':checkbox').change(function() {
+                filterRel = []
+                $(':checkbox').each(filterList)
+                console.log(filterRel)
+                releaseList.filter(function(item){
+                    console.log(item.values().size.replace('"', "INCH"))
+                    if (filterRel.includes(item.values().size.replace('"', "INCH"))) {
+                        return true
+                    } else {
+                        return false
+                    }
+                })
+            }); 
+
         })
         
     </script>
