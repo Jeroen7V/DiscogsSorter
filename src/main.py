@@ -13,7 +13,7 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 class Release(BaseModel):
-    title: Optional[str]
+    title: Optional[str] = ""
     artist: Optional[str] = ""
     size: str = ""
     size_safe: str = ""
@@ -127,7 +127,9 @@ def fetch_collection(p_user, p_token):
         release.size_safe = release.size.replace("\"", "INCH")
 
         for line in info["artists"]:
-            release.artist += " " + line["name"] + " " + line["join"]
+            name = line["name"] if type(line["name"]) == str else ""
+            join = line["join"] if type(line["join"]) == str else ""
+            release.artist += " " + name + " " + join
             release.artist = release.artist.strip()
 
         try:
