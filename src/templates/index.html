@@ -55,7 +55,10 @@
                 <hr />
             </div>
             <div class="col-md-2">
-                <h4>Folders:</h4>
+                <div class="col-md-12 form-check form-switch">
+                    <input class="form-check-input all_switch" type="checkbox" id="all_folder" checked>
+                    <label class="form-check-label h4" for="all_folder">Folders:</label>
+                </div>
                 {% for rel_folder in releases_folders %}
                 <div class="form-check form-switch">
                     <input class="form-check-input rel_switch" type="checkbox" id="folder_{{rel_folder}}" checked>
@@ -64,7 +67,10 @@
                 {% endfor %}
             </div>
             <div class="col-md-2">
-                <h4>Formats:</h4>
+                <div class="col-md-12 form-check form-switch">
+                    <input class="form-check-input all_switch" type="checkbox" id="all_format" checked>
+                    <label class="form-check-label h4" for="all_format">Formats:</label>
+                </div>
                 {% for rel_format in releases_formats %}
                 <div class="form-check form-switch">
                     <input class="form-check-input rel_switch" type="checkbox" id="format_{{rel_format | replace('\"', 'INCH') }}" checked>
@@ -73,7 +79,10 @@
                 {% endfor %}
             </div>
             <div class="col-md-2">
-                <h4>Types:</h4>
+                <div class="col-md-12 form-check form-switch">
+                    <input class="form-check-input all_switch" type="checkbox" id="all_type" checked>
+                    <label class="form-check-label h4" for="all_type">Types:</label>
+                </div>
                 {% for rel_type in releases_types %}
                 <div class="form-check form-switch">
                     <input class="form-check-input rel_switch" type="checkbox" id="type_{{rel_type}}" checked>
@@ -82,7 +91,10 @@
                 {% endfor %}
             </div>
             <div class="col-md-6 row">
-                <h4>Genres:</h4>
+                <div class="col-md-12 form-check form-switch">
+                    <input class="form-check-input all_switch" type="checkbox" id="all_genre" checked>
+                    <label class="form-check-label h4" for="all_genre">Genres:</label>
+                </div>
                 {% for rel_genre in releases_genres %}
                 <div class="col-md-6 form-check form-switch">
                     <input class="form-check-input rel_switch" type="checkbox" id="genre_{{rel_genre}}" checked>
@@ -184,6 +196,29 @@
 
             $(".rel_switch").change(filterRun);
             filterRun();
+
+            function selectAll() {
+                switchType = $(this)[0].id.split("_")[0];
+                switchVal = $(this)[0].id.split("_")[1];
+                
+                switch (switchVal) {
+                    case "folder":
+                        $(".rel_switch[id^='folder']").prop("checked", $(this)[0].checked);
+                        break;
+                    case "format":
+                        $(".rel_switch[id^='format']").prop("checked", $(this)[0].checked);
+                        break;
+                    case "type":
+                        $(".rel_switch[id^='type']").prop("checked", $(this)[0].checked);
+                        break;
+                    case "genre":
+                        $(".rel_switch[id^='genre']").prop("checked", $(this)[0].checked);
+                        break;
+                }
+                filterRun()
+            }
+
+            $(".all_switch").change(selectAll)
         });
     </script>
   </body>
