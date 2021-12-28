@@ -1,10 +1,7 @@
 import requests
-import sys
 import csv
-import aiofiles
 from typing import Optional, List
 from pydantic import BaseModel
-from collections import OrderedDict
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
@@ -13,6 +10,7 @@ from fastapi.templating import Jinja2Templates
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
 
 class Release(BaseModel):
     title: Optional[str] = ""
@@ -23,6 +21,7 @@ class Release(BaseModel):
     type: str = ""
     sort_genre: str = ""
     folder: str = ""
+
 
 def fetch_collection(p_user, p_token):
     dc_collection = requests.get(
@@ -39,7 +38,7 @@ def fetch_collection(p_user, p_token):
         + "/collection/fields?per_page=1000000&token="
         + p_token
     )
-    
+
     dc_folders = requests.get(
         "https://api.discogs.com/users/"
         + p_user
@@ -59,7 +58,9 @@ def fetch_collection(p_user, p_token):
         folder_id = item["folder_id"]
 
         release = Release(
-            title=info["title"], genres=info["genres"], styles=info["styles"],
+            title=info["title"],
+            genres=info["genres"],
+            styles=info["styles"],
         )
 
         for folder in dc_folders.json()["folders"]:
@@ -87,7 +88,7 @@ def fetch_collection(p_user, p_token):
             else:
                 if "descriptions" in format:
                     for description in format["descriptions"]:
-                        if "\"" in description:
+                        if '"' in description:
                             release.size = description
                         elif "RPM" in description:
                             speedstr = description.replace(" RPM", "").replace(" ⅓", "")
@@ -96,7 +97,7 @@ def fetch_collection(p_user, p_token):
                             elif release.speed != speedstr:
                                 release.speed = release.speed + "/" + speedstr
                         elif "LP" == description:
-                            release.size = "12\""
+                            release.size = '12"'
                             release.speed = "33"
                             release.type = "Album"
                         elif "EP" == description:
@@ -111,21 +112,21 @@ def fetch_collection(p_user, p_token):
                             release.type = "Album"
 
         if release.type == "":
-            if release.size == "12\"" or release.size == "10\"":
+            if release.size == '12"' or release.size == '10"':
                 if release.speed == "45":
                     release.type = "Maxi-Single"
                 if release.speed == "33":
                     release.type = "Album"
                 else:
                     release.type = "Maxi-Single"
-            elif release.size == "7\"":
+            elif release.size == '7"':
                 release.type = "Single"
             elif release.size == "CD":
                 release.type = "Album"
 
         if len(release.speed) > 0:
             release.speed = release.speed + " RPM"
-        release.size_safe = release.size.replace("\"", "INCH")
+        release.size_safe = release.size.replace('"', "INCH")
 
         for line in info["artists"]:
             name = line["name"] if type(line["name"]) == str else ""
@@ -140,12 +141,11 @@ def fetch_collection(p_user, p_token):
                         release.sort_genre = note["value"]
         except:
             pass
-                
+
         releases.append(release)
 
-    return sorted(
-        releases, key=lambda x: (x.size, x.sort_genre, x.artist, x.title)
-    )
+    return sorted(releases, key=lambda x: (x.size, x.sort_genre, x.artist, x.title))
+
 
 def get_fields(p_releases: Release):
     folders = []
@@ -164,22 +164,29 @@ def get_fields(p_releases: Release):
             types = [release.type]
         elif release.type not in types:
             types.append(release.type)
-    returnDict = {
-        "folders": folders,
-        "formats": formats,
-        "types": types
-    }
+    returnDict = {"folders": folders, "formats": formats, "types": types}
     return returnDict
+
 
 def write_csv(p_releases):
     csvfilename = "releases.csv"
 
     with open(csvfilename, "w", newline="") as csvfile:
         csvwriter = csv.writer(csvfile)
-        csvwriter.writerow(["folder", "size", "type", "genre", "artist", "title", "speed"])
+        csvwriter.writerow(
+            ["folder", "size", "type", "genre", "artist", "title", "speed"]
+        )
         for release in p_releases:
             csvwriter.writerow(
-                [release.folder, release.size, release.type, release.sort_genre, release.artist, release.title, release.speed]
+                [
+                    release.folder,
+                    release.size,
+                    release.type,
+                    release.sort_genre,
+                    release.artist,
+                    release.title,
+                    release.speed,
+                ]
             )
 
     return csvfilename
