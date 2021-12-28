@@ -66,8 +66,8 @@
                 <h4>Formats:</h4>
                 {% for rel_format in releases_formats %}
                 <div class="form-check form-switch">
-                    <input class="form-check-input rel_switch" type="checkbox" id="rel_{{rel_format | replace('\"', 'INCH') }}" checked>
-                    <label class="form-check-label" for="rel_{{rel_format | replace('\"', 'INCH') }}">{{rel_format}}</label>
+                    <input class="form-check-input rel_switch" type="checkbox" id="format_{{rel_format | replace('\"', 'INCH') }}" checked>
+                    <label class="form-check-label" for="format_{{rel_format | replace('\"', 'INCH') }}">{{rel_format}}</label>
                 </div>
                 {% endfor %}
             </div>
@@ -117,7 +117,7 @@
 
     <script>
         $(document).ready( function () {
-            filterRel = []
+            filterFormat = []
             filterFolder = []
 
             var options = {
@@ -139,11 +139,11 @@
                 switchType = $(this)[0].id.split("_")[0]
                 switchVal = $(this)[0].id.split("_")[1]
 
-                if (switchType == "rel") {
+                if (switchType == "format") {
                     if ($(this)[0].checked) {
-                        filterRel.push(switchVal)
+                        filterFormat.push(switchVal)
                     } else {
-                        delete filterRel[filterRel.indexOf(switchVal)]
+                        delete filterFormat[filterFormat.indexOf(switchVal)]
                     }
                 } else if (switchType == "folder") {
                     if ($(this)[0].checked) {
@@ -157,11 +157,11 @@
             $(':checkbox').each(filterList)
 
             $(':checkbox').change(function() {
-                filterRel = []
+                filterFormat = []
                 filterFolder = []
                 $(':checkbox').each(filterList)
                 releaseList.filter(function(item){
-                    if (filterRel.includes(item.values().size.replace('"', "INCH")) && filterFolder.includes(item.values().folder )) {
+                    if (filterFormat.includes(item.values().size.replace('"', "INCH")) && filterFolder.includes(item.values().folder )) {
                         return true
                     } else {
                         return false
