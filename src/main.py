@@ -147,48 +147,6 @@ def fetch_collection(p_user, p_token):
         releases, key=lambda x: (x.size, x.sort_genre, x.artist, x.title)
     )
 
-
-def sort_by_format(p_releases: Release):
-    releases_sorted = {}
-    for release in p_releases:
-        if release.size not in releases_sorted:
-            releases_sorted[release.size] = []
-        releases_sorted[release.size].append(release)
-
-    for sort_format, realeases in releases_sorted.items():
-        releases_sorted[sort_format] = sorted(
-            realeases, key=lambda x: (x.sort_genre, x.artist, x.title)
-        )
-
-    return releases_sorted
-
-def get_folders(p_releases: Release):
-    folders = []
-    for release in p_releases:
-        if not folders:
-            folders = [release.folder]
-        elif release.folder not in folders:
-            folders.append(release.folder)
-    return folders
-
-def get_formats(p_releases: Release):
-    formats = []
-    for release in p_releases:
-        if not formats:
-            formats = [release.size]
-        elif release.size not in formats:
-            formats.append(release.size)
-    return formats
-
-def get_types(p_releases: Release):
-    types = []
-    for release in p_releases:
-        if not types:
-            types = [release.type]
-        elif release.type not in types:
-            types.append(release.type)
-    return types
-
 def get_fields(p_releases: Release):
     folders = []
     formats = []
