@@ -50,7 +50,6 @@
         </div>
 
         {% if type %}
-        {% if user_token %}
         <div class="row mt-3">
             <div class="col-md-12">
                 <hr />
@@ -92,7 +91,6 @@
                 {% endfor %}
             </div>
         </div>
-        {% endif %}
         
         <div class="row mt-3">
             <div id="releases" class="col-12">
@@ -102,9 +100,7 @@
                             <th scope="col" class="sort" data-sort="folder">folder</th>
                             <th scope="col" class="sort" data-sort="size">format</th>
                             <th scope="col" class="sort" data-sort="type">type</th>
-                            {% if user_token %}
                             <th scope="col" class="sort" data-sort="genre">genre</th>
-                            {% endif %}
                             <th scope="col" class="sort" data-sort="artist">artist</th>
                             <th scope="col" class="sort" data-sort="title">title</th>
                             <th scope="col" class="sort" data-sort="speed">speed</th>
@@ -116,9 +112,7 @@
                             <td class="folder">{{ release.folder }}</td>
                             <td class="size">{{ release.size }}</td>
                             <td class="type">{{ release.type }}</td>
-                            {% if user_token %}
                             <td class="genre">{{ release.sort_genre }}</td>
-                            {% endif %}
                             <td class="artist">{{ release.artist }}</td>
                             <td class="title">{{ release.title }}</td>
                             <td class="speed">{{ release.speed }}</td>
@@ -143,19 +137,13 @@
             filterGenre = []
 
             var options = {
-                {% if user_token %}
                 valueNames: [ 'folder', 'size', 'type', 'genre', 'artist', 'title', 'speed' ]
-                {% else %}
-                valueNames: [ 'folder', 'size', 'type', 'artist', 'title', 'speed' ]
-                {% endif %}
             }
 
             var releaseList = new List('releases', options);
             releaseList.sort("title");
             releaseList.sort("artist");
-            {% if user_token %}
             releaseList.sort("genre");
-            {% endif %}
 
             function filterList() {
                 switchType = $(this)[0].id.split("_")[0]
