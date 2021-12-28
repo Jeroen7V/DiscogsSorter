@@ -71,6 +71,15 @@
                 </div>
                 {% endfor %}
             </div>
+            <div class="col-md-3">
+                <h4>Types:</h4>
+                {% for rel_type in releases_types %}
+                <div class="form-check form-switch">
+                    <input class="form-check-input rel_switch" type="checkbox" id="type_{{rel_type}}" checked>
+                    <label class="form-check-label" for="type_{{rel_type}}">{{rel_type}}</label>
+                </div>
+                {% endfor %}
+            </div>
         </div>
         {% endif %}
         
@@ -119,6 +128,7 @@
         $(document).ready( function () {
             filterFormat = []
             filterFolder = []
+            filterType = []
 
             var options = {
                 {% if user_token %}
@@ -151,6 +161,12 @@
                     } else {
                         delete filterFolder[filterFolder.indexOf(switchVal)]
                     }
+                } else if (switchType == "type") {
+                    if ($(this)[0].checked) {
+                        filterType.push(switchVal)
+                    } else {
+                        delete filterType[filterType.indexOf(switchVal)]
+                    }
                 }
             }
 
@@ -159,13 +175,12 @@
             $(':checkbox').change(function() {
                 filterFormat = []
                 filterFolder = []
+                filterType = []
                 $(':checkbox').each(filterList)
                 releaseList.filter(function(item){
-                    if (filterFormat.includes(item.values().size.replace('"', "INCH")) && filterFolder.includes(item.values().folder )) {
-                        return true
-                    } else {
-                        return false
-                    }
+                    return filterFormat.includes(item.values().size.replace('"', "INCH")) &&
+                        filterFolder.includes(item.values().folder) &&
+                        filterType.includes(item.values().type)
                 })
             }); 
 
