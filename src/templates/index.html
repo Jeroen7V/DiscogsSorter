@@ -130,70 +130,61 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
 
     <script>
-        $(document).ready( function () {
-            filterFormat = []
-            filterFolder = []
-            filterType = []
-            filterGenre = []
+        $(document).ready(function () {
+            filterFormat = [];
+            filterFolder = [];
+            filterType = [];
+            filterGenre = [];
 
             var options = {
-                valueNames: [ 'folder', 'size', 'type', 'genre', 'artist', 'title', 'speed' ]
-            }
+                valueNames: ["folder", "size", "type", "genre", "artist", "title", "speed"],
+            };
 
-            var releaseList = new List('releases', options);
+            var releaseList = new List("releases", options);
             releaseList.sort("title");
             releaseList.sort("artist");
             releaseList.sort("genre");
 
             function filterList() {
-                switchType = $(this)[0].id.split("_")[0]
-                switchVal = $(this)[0].id.split("_")[1]
+                switchType = $(this)[0].id.split("_")[0];
+                switchVal = $(this)[0].id.split("_")[1];
 
-                if (switchType == "format") {
-                    if ($(this)[0].checked) {
-                        filterFormat.push(switchVal)
-                    } else {
-                        delete filterFormat[filterFormat.indexOf(switchVal)]
-                    }
-                } else if (switchType == "folder") {
-                    if ($(this)[0].checked) {
-                        filterFolder.push(switchVal)
-                    } else {
-                        delete filterFolder[filterFolder.indexOf(switchVal)]
-                    }
-                } else if (switchType == "type") {
-                    if ($(this)[0].checked) {
-                        filterType.push(switchVal)
-                    } else {
-                        delete filterType[filterType.indexOf(switchVal)]
-                    }
-                } else if (switchType == "genre") {
-                    if ($(this)[0].checked) {
-                        filterGenre.push(switchVal)
-                    } else {
-                        delete filterGenre[filterGenre.indexOf(switchVal)]
+                if ($(this)[0].checked) {
+                    switch (switchType) {
+                        case "format":
+                            filterFormat.push(switchVal);
+                            break;
+                        case "folder":
+                            filterFolder.push(switchVal);
+                            break;
+                        case "type":
+                            filterType.push(switchVal);
+                            break;
+                        case "genre":
+                            filterGenre.push(switchVal);
+                            break;
                     }
                 }
             }
 
-            $(':checkbox').each(filterList)
+            function filterApply() {
+                releaseList.filter(function (item) {
+                    return filterFormat.includes(item.values().size.replace('"', "INCH")) && filterFolder.includes(item.values().folder) && filterType.includes(item.values().type) && filterGenre.includes(item.values().genre);
+                });
+            }
 
-            $(':checkbox').change(function() {
-                filterFormat = []
-                filterFolder = []
-                filterType = []
-                filterGenre = []
-                $(':checkbox').each(filterList)
-                releaseList.filter(function(item){
-                    return filterFormat.includes(item.values().size.replace('"', "INCH")) &&
-                        filterFolder.includes(item.values().folder) &&
-                        filterType.includes(item.values().type) &&
-                        filterGenre.includes(item.values().genre)
-                })
-            }); 
+            function filterRun() {
+                filterFormat = [];
+                filterFolder = [];
+                filterType = [];
+                filterGenre = [];
+                $(".rel_switch").each(filterList);
+                filterApply();
+            }
 
-        })
-        
+            $(".rel_switch").change(filterRun);
+            filterRun();
+        });
     </script>
   </body>
 </html>
