@@ -55,7 +55,7 @@
             <div class="col-md-12">
                 <hr />
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <h4>Folders:</h4>
                 {% for rel_folder in releases_folders %}
                 <div class="form-check form-switch">
@@ -64,7 +64,7 @@
                 </div>
                 {% endfor %}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <h4>Formats:</h4>
                 {% for rel_format in releases_formats %}
                 <div class="form-check form-switch">
@@ -73,12 +73,21 @@
                 </div>
                 {% endfor %}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <h4>Types:</h4>
                 {% for rel_type in releases_types %}
                 <div class="form-check form-switch">
                     <input class="form-check-input rel_switch" type="checkbox" id="type_{{rel_type}}" checked>
                     <label class="form-check-label" for="type_{{rel_type}}">{{rel_type}}</label>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-6 row">
+                <h4>Genres:</h4>
+                {% for rel_genre in releases_genres %}
+                <div class="col-md-6 form-check form-switch">
+                    <input class="form-check-input rel_switch" type="checkbox" id="genre_{{rel_genre}}" checked>
+                    <label class="form-check-label" for="genre_{{rel_genre}}">{{rel_genre}}</label>
                 </div>
                 {% endfor %}
             </div>
@@ -131,6 +140,7 @@
             filterFormat = []
             filterFolder = []
             filterType = []
+            filterGenre = []
 
             var options = {
                 {% if user_token %}
@@ -169,6 +179,12 @@
                     } else {
                         delete filterType[filterType.indexOf(switchVal)]
                     }
+                } else if (switchType == "genre") {
+                    if ($(this)[0].checked) {
+                        filterGenre.push(switchVal)
+                    } else {
+                        delete filterGenre[filterGenre.indexOf(switchVal)]
+                    }
                 }
             }
 
@@ -178,11 +194,13 @@
                 filterFormat = []
                 filterFolder = []
                 filterType = []
+                filterGenre = []
                 $(':checkbox').each(filterList)
                 releaseList.filter(function(item){
                     return filterFormat.includes(item.values().size.replace('"', "INCH")) &&
                         filterFolder.includes(item.values().folder) &&
-                        filterType.includes(item.values().type)
+                        filterType.includes(item.values().type) &&
+                        filterGenre.includes(item.values().genre)
                 })
             }); 
 

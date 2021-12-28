@@ -151,6 +151,7 @@ def get_fields(p_releases: Release):
     folders = []
     formats = []
     types = []
+    genres = []
     for release in p_releases:
         if not folders:
             folders = [release.folder]
@@ -164,7 +165,11 @@ def get_fields(p_releases: Release):
             types = [release.type]
         elif release.type not in types:
             types.append(release.type)
-    returnDict = {"folders": folders, "formats": formats, "types": types}
+        if not genres:
+            genres = [release.sort_genre]
+        elif release.sort_genre not in genres:
+            genres.append(release.sort_genre)
+    returnDict = {"folders": folders, "formats": formats, "types": types, "genres": genres}
     return returnDict
 
 
@@ -200,6 +205,7 @@ async def get_html(
     releases_folders = []
     releases_formats = []
     releases_types = []
+    releases_genres = []
 
     if type:
         if user and type == "HTML":
@@ -208,6 +214,7 @@ async def get_html(
             releases_folders = releases_fields["folders"]
             releases_formats = releases_fields["formats"]
             releases_types = releases_fields["types"]
+            releases_genres = releases_fields["genres"]
         elif user and type == "CSV":
             releases = fetch_collection(user, user_token)
             return FileResponse(write_csv(releases), filename="releases.csv")
@@ -227,6 +234,7 @@ async def get_html(
             "releases_folders": releases_folders,
             "releases_formats": releases_formats,
             "releases_types": releases_types,
+            "releases_genres": releases_genres,
             "len": len,
         },
     )
