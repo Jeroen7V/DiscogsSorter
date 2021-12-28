@@ -189,6 +189,30 @@ def get_types(p_releases: Release):
             types.append(release.type)
     return types
 
+def get_fields(p_releases: Release):
+    folders = []
+    formats = []
+    types = []
+    for release in p_releases:
+        if not folders:
+            folders = [release.folder]
+        elif release.folder not in folders:
+            folders.append(release.folder)
+        if not formats:
+            formats = [release.size]
+        elif release.size not in formats:
+            formats.append(release.size)
+        if not types:
+            types = [release.type]
+        elif release.type not in types:
+            types.append(release.type)
+    returnDict = {
+        "folders": folders,
+        "formats": formats,
+        "types": types
+    }
+    return returnDict
+
 def write_csv(p_releases):
     csvfilename = "releases.csv"
 
@@ -215,9 +239,10 @@ async def get_html(
     if type:
         if user and type == "HTML":
             releases = fetch_collection(user, user_token)
-            releases_folders = get_folders(releases)
-            releases_formats = get_formats(releases)
-            releases_types = get_types(releases)
+            releases_fields = get_fields(releases)
+            releases_folders = releases_fields["folders"]
+            releases_formats = releases_fields["formats"]
+            releases_types = releases_fields["types"]
         elif user and type == "CSV":
             releases = fetch_collection(user, user_token)
             return FileResponse(write_csv(releases), filename="releases.csv")
